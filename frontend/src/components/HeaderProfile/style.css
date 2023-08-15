@@ -22,7 +22,7 @@
     border: 0.4rem solid #fff;
 }
 #header-profile .header-profile-detail-text {
-    flex-direction: 2 rem ;
+    margin-bottom: 2rem ;
 }
 #header-profile .header-profile-detail-text h5{
     font-weight: 800;
