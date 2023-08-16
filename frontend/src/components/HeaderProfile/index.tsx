@@ -4,9 +4,16 @@ import { CalendarMonthOutlined } from "@mui/icons-material";
 import banner from '../../assets/img/profile_banner.png';
 import avatar from '../../assets/img/profile_avatar.jpg';
 import './style.css';
+import { IntlProvider } from "react-intl";
+import { FormattedDate } from "react-intl";
 
+type HeaderProfileProps = {
+    user: any
+}
 
-function HeaderProfile() {
+function HeaderProfile({
+    user
+}: HeaderProfileProps) {
     return (
         <Box id="header-profile"> 
 
@@ -15,23 +22,26 @@ function HeaderProfile() {
         </Box>
 
         <Box className="header-profile-detail">
-            <Avatar alt="Fulano de Tal" style={{width: 128, height:128 }} src={avatar} className="header-profile-detail-avatar"/>
+            <Avatar alt={user.fullname} style={{width: 128, height:128 }} src={avatar} className="header-profile-detail-avatar"/>
             <Box className="header-profile-detail-text">
                 <Typography variant="h5">
-                    Fulano de tal
+                    {user.fullname}
                 </Typography>
 
                 <Typography variant="subtitle1"component="h6">
-                    @fulanodetal
+                    @{user.username}
                 </Typography>
 
                 <Typography variant="subtitle1" component="p">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos quia nesciunt aperiam omnis officiis expedita, accusantium repellendus modi perferendis, sunt minus dolorem tenetur neque nemo temporibus! Recusandae eius soluta sunt!
+                    {user.description}
                 </Typography>
 
                 <Typography variant="caption">
                     <CalendarMonthOutlined/>
-                    Entrou em agosto de 2023
+                    <IntlProvider locale="pt-BR">
+                        Entrou em <FormattedDate value={user.creatdAt} month="long" year="numeric"/>
+                    </IntlProvider>
+                    Entrou em {user.creatdAt}
                 </Typography>
 
             </Box>

@@ -1,21 +1,12 @@
-import TopicCard from "./components/TopicCard"
-import TopicCardSkeleton from "./components/TopicCard"
-import { Divider } from "@mui/material"
+
+import TopicPage from "../src/pages/Topic"
+
 
 function App() {
 
   return (
     <div id="App">
-      <TopicCard/>
-      <Divider/>
-      <TopicCard/>
-      <TopicCard/>
-      <Divider/>
-      <TopicCard/>
-      <TopicCard/>
-      <Divider/>
-      <TopicCard/>
-      <TopicCardSkeleton/>
+      <TopicPage/>
     </div>
   )
 }
