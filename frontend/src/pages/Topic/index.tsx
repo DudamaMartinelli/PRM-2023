@@ -1,15 +1,21 @@
 import HeaderProfile from "../../components/HeaderProfile"
 import { Box } from "@mui/material";
 import TopicList from "../../components/TopcList";
+import {useEffect, useState} from "react"
 
-function TopcPage() {
+function TopicPage() {
 
-    const profile = {
-        fullname: 'Maria Eduarda Martinelli',
-        username: 'dudamartinelli',
-        description: 'dev',
-        creatdAt: '2022-08-13'
-    }
+    const[profile, setProfile] = useState({});
+
+    useEffect(() => {
+
+        fetch('http://localhost:3000/profile')
+        .then(res => res.json())
+        .then(data => {
+            setProfile(data);
+        })
+
+    }, [])
 
     const topics = [
         {
@@ -44,6 +50,7 @@ function TopcPage() {
             likes: 30,
             createAt: '2023-08-01 19:23:00'  
         }
+        
     ]
 
     return (
@@ -54,4 +61,4 @@ function TopcPage() {
     )    
 }
 
-export default TopcPage;
+export default TopicPage

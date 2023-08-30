@@ -11,11 +11,11 @@ function TopicCard({
 }: TopicCardProps) {
     return (
         <div id="topic-card">
-            <TopicCardHeader></TopicCardHeader>
-            <TopicCardBody></TopicCardBody>
-            <TopicCardActions></TopicCardActions>
+            <TopicCardHeader />
+            <TopicCardBody />
+            <TopicCardActions />
         </div>
-    )    
+    )
 }
 
 export default TopicCard;
