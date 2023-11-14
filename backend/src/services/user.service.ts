@@ -24,10 +24,7 @@ export class UserService {
     create(user: User): Promise<User> {
         return this.repository.save(user);
     }
-
-    async delete(id: number): Promise<void> {
-        await this.repository.delete(id);
-    }
+   
 
     async update(id: number, user: User): Promise<User> {
 
@@ -42,5 +39,8 @@ export class UserService {
 
         return this.repository.save(user);
 
+    }
+    async delete(id:number): Promise<void>{
+        await this.repository.delete(id);
     }
 }
