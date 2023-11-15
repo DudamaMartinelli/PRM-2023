@@ -1,17 +1,29 @@
 import { Avatar, Typography } from "@mui/material";
 import './style.css';
+import { IUser } from "../../@types";
+import { FormattedDate, IntlProvider } from "react-intl";
 
-function TopicCardHeader() {
+type TopicCardHeaderProps = {
+    createdAt : Date;
+    owner : IUser
+}
+
+function TopicCardHeader({
+    createdAt,
+    owner
+}: TopicCardHeaderProps){
     return (
         <div id="topic-card-header">
-            <Avatar alt="fulano de tal" />
+            <Avatar alt={owner.fullname} />
+
             <div className="card-header-text">
                 <Typography variant="h6">
-                    Fulano de tal
+                    {owner.fullname}
                 </Typography>
 
                 <Typography variant="caption">
-                    Criado a 8 horas
+                    <IntlProvider locale='pt-BR'/>
+                        Criado em <FormattedDate value={createdAt} day='2-digit' month='2-digit' year='numeric'/>
                 </Typography>
             </div>
 

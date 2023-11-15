@@ -1,10 +1,10 @@
-import { Alert, Box, Snackbar } from "@mui/material"
+import { Alert, Box, Snackbar, Tabs } from "@mui/material"
 import HeaderProfile from "../../components/HeaderProfile"
 import TopicList from "../../components/TopcList"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useAuth } from "../../hook/useAuth"
-import { getProfileByUsername } from "../../services"
+import { getProfileByUsername, getTopicsByUsername } from "../../services"
 
 function TopicPage() {
 
@@ -12,6 +12,10 @@ function TopicPage() {
     const { user } = useAuth();
     const params = useParams();
     const [profile, setProfile] = useState({});
+
+    const [messageError, setMessageError] = useState('');
+
+    const [profileTopics, setprofileTopics] = useState({});
 
     useEffect(() => {
 
@@ -21,8 +25,11 @@ function TopicPage() {
             getProfileByUsername(username)
                 .then(result => {
                     setProfile(result.data);
-
-                    //TO-DO: Carregar topics do usuario (owner)
+                    //Carrega topics 
+                    getTopicsByUsername(username)
+                    .then(result=>{
+                        setprofileTopics(profileTopics)
+                    })
                 })
                 .catch(error => {
                     setMessageError(String(error.message))
@@ -31,7 +38,7 @@ function TopicPage() {
 
     }, [])
 
-    const topics = [
+   /* const topics = [
         {
             owner: { fullname: 'Pedro da Silva' },
             content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam ad sapiente non veritatis aspernatur architecto! Eveniet, et eius maxime dolorem sequi, nulla aliquam ipsam tenetur magni officia, quisquam totam sapiente!',
@@ -68,7 +75,7 @@ function TopicPage() {
             likes: 10,
             createdAt: '2023-08-11 19:23:00'
         },
-    ]
+    ]*/
 
 
 
@@ -78,7 +85,19 @@ function TopicPage() {
             
             <HeaderProfile user={profile} />
 
-            <TopicList items={topics} />
+            <Box className="topic-page-content" style={{width: '64rem' }}>
+                
+                {(profile.id == user?.id) && (
+                    <Tabs value={tab} onChange={handleTabChange}>
+                        <Tab value={1} label="Tópicos" />
+                        <Tab value={2} label="Meus Tópicos" />
+                    </Tabs>
+                )}
+
+	            <TopicList items={topics} />
+
+            </Box>
+
 
             <Snackbar
                 open={Boolean(messageError)}
@@ -93,7 +112,6 @@ function TopicPage() {
             </Snackbar>
         </Box>
     )
-
 }
 
-export default TopicPage
+export default TopicPage;

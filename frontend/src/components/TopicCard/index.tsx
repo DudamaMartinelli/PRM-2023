@@ -11,7 +11,10 @@ function TopicCard({
 }: TopicCardProps) {
     return (
         <div id="topic-card">
-            <TopicCardHeader />
+            <TopicCardHeader 
+            createdAt={topic.createdAt}
+            owner={topic.owner}
+            />
             <TopicCardBody />
             <TopicCardActions />
         </div>

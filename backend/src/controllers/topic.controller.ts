@@ -1,14 +1,31 @@
-import {Controller, Get, Param, ParseIntPipe, Post, Body, Delete, HttpCode } from "@nestjs/common"; 
+import {Controller, Get, Param, ParseIntPipe, Post, Body, Delete, HttpCode, Query, HttpException, HttpStatus } from "@nestjs/common"; 
 import {Topic} from "src/entities/topic.entity";
 import { TopicService } from "src/services/topic.service";
+import { UserService } from "src/services/user.service";
 
 @Controller('topics')
 export class TopicController {
-    constructor(private readonly service: TopicService){}
+    constructor(
+        private readonly service: TopicService,
+        private readonly userService: UserService
+        ){}
 
     @Get()
-    findAll(): Promise<Topic []>{
-        return this.service.findAll();
+    async findAll(@Query() query): Promise<Topic []>{
+
+        if (query?.username) {
+            //Busco os topicos dos usuarios
+            const found =  await this.userService.findByUsername(query.username);
+
+            if (!found){
+                throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST)
+            }
+            return this.service.findByUser(found);
+        }else {
+            return this.service.findAll();
+        }
+
+        
     }
 
     @Get(':id')
