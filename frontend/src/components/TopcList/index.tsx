@@ -10,7 +10,7 @@ function TopicList({
     items
 }: TopcListProps) {
     return (
-        <Box id="topic-list"  display="flex" flexDirection="column" gap={3} maxWidth="64rem">
+        <Box id="topic-list"  display="flex" flexDirection="column" gap={3} style={{marginTop: '2rem', maxWidth: '64rem'}}>
             {items.map((item: any, index:number) => (
                 <Box display="flex" flexDirection="column" gap={3} key={index}>
                    <TopicCard topic={item}/>

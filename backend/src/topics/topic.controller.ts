@@ -1,7 +1,7 @@
 import {Controller, Get, Param, ParseIntPipe, Post, Body, Delete, HttpCode, Query, HttpException, HttpStatus } from "@nestjs/common"; 
-import {Topic} from "src/entities/topic.entity";
-import { TopicService } from "src/services/topic.service";
-import { UserService } from "src/services/user.service";
+import {Topic} from "./topic.entity";
+import { TopicService } from "./topic.service";
+import { UserService } from "src/users/user.service";
 
 @Controller('topics')
 export class TopicController {

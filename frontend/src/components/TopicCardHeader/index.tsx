@@ -4,8 +4,8 @@ import { IUser } from "../../@types";
 import { FormattedDate, IntlProvider } from "react-intl";
 
 type TopicCardHeaderProps = {
-    createdAt : Date;
-    owner : IUser
+    createdAt : Date | undefined;
+    owner : IUser | undefined;
 }
 
 function TopicCardHeader({
@@ -14,11 +14,11 @@ function TopicCardHeader({
 }: TopicCardHeaderProps){
     return (
         <div id="topic-card-header">
-            <Avatar alt={owner.fullname} />
+            <Avatar alt={owner?.fullname} />
 
             <div className="card-header-text">
                 <Typography variant="h6">
-                    {owner.fullname}
+                    {owner?.fullname}
                 </Typography>
 
                 <Typography variant="caption">

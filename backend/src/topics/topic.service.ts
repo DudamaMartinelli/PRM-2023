@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Topic } from "src/entities/topic.entity";
-import { User } from "src/entities/user.entity";
+import { Topic } from "./topic.entity";
+import { User } from "src/users/user.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -23,6 +23,9 @@ export class TopicService {
                 owner: {
                     id: user.id
                 }
+            },
+            order: {
+                id: 'DESC'
             }
         });
     }    
