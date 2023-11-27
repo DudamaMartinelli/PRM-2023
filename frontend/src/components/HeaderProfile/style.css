@@ -14,7 +14,7 @@
 }
 #header-profile .header-profile-detail {
     margin-top: -4rem;
-    max-width: 64rem;
+    width: 64rem;
 }
 #header-profile .header-profile-detail-avatar {
     border: 0.4rem solid #fff;

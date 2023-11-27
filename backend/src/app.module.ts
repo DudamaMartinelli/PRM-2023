@@ -5,8 +5,9 @@ import { Topic } from './topics/topic.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './users/user.module';
 import { TopicModule } from './topics/topic.module';
-import { ProfileModule } from './profiles/profile.module';
 import { AuthModule } from './auth/auth.module';
+import { ProfileModule } from './profiles/profile.module';
+import { CommentModule } from './comments/comment.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     TopicModule,
     AuthModule,
-    ProfileModule
+    ProfileModule,
+    CommentModule
   ],
   controllers: [],
   providers: [],

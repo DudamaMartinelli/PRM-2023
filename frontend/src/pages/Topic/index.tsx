@@ -4,7 +4,7 @@ import TopicList from "../../components/TopcList"
 import { SyntheticEvent, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useAuth } from "../../hook/useAuth"
-import { getProfileByUsername, getTopicsByUsername } from "../../services"
+import { createTopic, getProfileByUsername, getTopicsByUsername } from "../../services"
 import { ITopic, IUser } from "../../@types"
 import AddIcon from '@mui/icons-material/Add';
 import { LoadingButton } from "@mui/lab"
@@ -21,10 +21,10 @@ function TopicPage() {
     const [messageSuccess, setMessageSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
-    //TOPICS
-    const [topic, setTopics] = useState([]);
-    const [profileTopics, setprofileTopics] = useState({});
 
+    //TOPICS
+    const [topics, setTopics] = useState<ITopic[]>([]);
+    const [profileTopics, setProfileTopics] = useState<ITopic[]>([]);
 
     //TABS
     const [tab, setTab] = useState(2);
@@ -46,22 +46,37 @@ function TopicPage() {
     function handleCreateTopic() {
         setLoading(true);
 
-        //TO-DO: Chama a service para enviar para a API
+        //Chama a service para enviar para a API
+        createTopic(topicForm)
+            .then(result => {
+                setProfileTopics([result.data, ...topics]);
+                setMessageSuccess('Tópico criado com sucesso!');
+                setTimeout(() => {
+                    setMessageSuccess('')
+                }, 5000)
+            })
+            .catch(error => {
+                setMessageError(error.message);
+            })
+            .finally(()=> {
+                setShowForm(false);
+                setLoading(false);
+            })
     }
 
     useEffect(() => {
-
         const username = params.username ? params.username : user?.username;
 
         if (username) {
             getProfileByUsername(username)
                 .then(result => {
                     setProfile(result.data);
-                    //Carrega topics 
-                    getTopicsByUsername(username)
-                    .then(result=>{
-                        setprofileTopics(profileTopics)
-                    })
+
+                    //Carregar topics do usuario (owner)
+                    return getTopicsByUsername(username)
+                        .then(result=> {
+                            setProfileTopics(result.data)
+                        })
                 })
                 .catch(error => {
                     setMessageError(String(error.message))
@@ -82,46 +97,6 @@ function TopicPage() {
         }
     }, [tab])
 
-   /* const topics = [
-        {
-            owner: { fullname: 'Pedro da Silva' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam ad sapiente non veritatis aspernatur architecto! Eveniet, et eius maxime dolorem sequi, nulla aliquam ipsam tenetur magni officia, quisquam totam sapiente!',
-            comments: 1,
-            reposts: 1,
-            likes: 30,
-            createdAt: '2023-08-01 19:23:00'
-        },{
-            owner: { fullname: 'Marina Silva' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam ad sapiente non veritatis aspernatur architecto! Eveniet, et eius maxime dolorem sequi, nulla aliquam ipsam tenetur magni officia, quisquam totam sapiente!',
-            comments: 12,
-            reposts: 2,
-            likes: 300,
-            createdAt: '2023-08-02 19:23:00'
-        },{
-            owner: { fullname: 'Lula da Silva' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam ad sapiente non veritatis aspernatur architecto! Eveniet, et eius maxime dolorem sequi, nulla aliquam ipsam tenetur magni officia, quisquam totam sapiente!',
-            comments: 51,
-            reposts: 14,
-            likes: 30,
-            createdAt: '2023-08-04 19:23:00'
-        },{
-            owner: { fullname: 'Neymar Junior' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam ad sapiente non veritatis aspernatur architecto! Eveniet, et eius maxime dolorem sequi, nulla aliquam ipsam tenetur magni officia, quisquam totam sapiente!',
-            comments: 0,
-            reposts: 0,
-            likes: 1,
-            createdAt: '2023-08-7 19:23:00'
-        },{
-            owner: { fullname: 'Pedro da Scobby' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam ad sapiente non veritatis aspernatur architecto! Eveniet, et eius maxime dolorem sequi, nulla aliquam ipsam tenetur magni officia, quisquam totam sapiente!',
-            comments: 0,
-            reposts: 0,
-            likes: 10,
-            createdAt: '2023-08-11 19:23:00'
-        },
-    ]*/
-
-
 
     return (
         <Box id="topic-page" display="flex" flexDirection="column"
@@ -130,7 +105,7 @@ function TopicPage() {
             <HeaderProfile user={profile} />
 
             <Box className="topic-page-content" style={{width: '64rem'}}>
-
+                
                 {profile.id == user?.id && (
                     <Tabs value={tab} onChange={handleTabChange}>
                         <Tab value={1} label="Tópicos" />
@@ -150,7 +125,7 @@ function TopicPage() {
                         {showForm && (
                             <Box display="flex" flexDirection="column" alignItems="end"
                                 gap={3} style={{marginTop: '2rem', width: '100%'}}>
-
+                                
                                 <TextField
                                     label="Novo Tópico"
                                     placeholder="No que você está pensando?"
@@ -161,6 +136,8 @@ function TopicPage() {
                                     rows={4}
                                     disabled={loading}
                                     inputProps={{maxLength: 250}}
+                                    value={ topicForm.content}
+                                    onChange={event => setTopicForm({...topicForm, content: (event.target as HTMLInputElement).value})}
                                 />
 
                                 <Box display="flex" flexDirection="row" gap={3}>
@@ -191,8 +168,6 @@ function TopicPage() {
                 )}
             </Box>
 
-
-
             <Snackbar
                 open={Boolean(messageError)}
                 autoHideDuration={6000}
@@ -204,8 +179,20 @@ function TopicPage() {
                     {messageError}
                 </Alert>
             </Snackbar>
+
+            <Snackbar
+                open={Boolean(messageSuccess)}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+
+                <Alert severity="success" 
+                    variant="filled" 
+                    onClose={() => setMessageSuccess('')}>
+                    {messageSuccess}
+                </Alert>
+            </Snackbar>
         </Box>
     )
+
 }
 
-export default TopicPage;
+export default TopicPage

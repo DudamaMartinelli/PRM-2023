@@ -17,7 +17,7 @@ type AuthContextProviderProps = {
     children: ReactNode
 }
 export function AuthContextProvider(props: AuthContextProviderProps) {
-
+ 
     const [user, setUser] = useState<IUser>();
     const [token, setToken] = useState<string>();
 
@@ -64,7 +64,7 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     }
 
     async function register(newUser: IUser): Promise<Record<string, any>> {
-
+        
         try {
 
             const result = await signUp(newUser);
@@ -84,6 +84,7 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     }
 
     function logout(){}
+    
 
     return (
         <AuthContext.Provider value={{user, token, login, logout, register}}>

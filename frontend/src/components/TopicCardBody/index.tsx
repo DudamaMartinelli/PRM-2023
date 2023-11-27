@@ -7,12 +7,12 @@ function TopicCardBody({
     content
 }: TopicCardBodyProps) {
     return (
-        <div id="topic-card-body" style= {{marginLeft: '3rem'}}>
+        <div id="topic-card-body" style={{marginLeft: '3rem'}}>
             <Typography variant="body1">
-                {content}                
+                {content}
             </Typography>
         </div>
-    )    
+    )
 }
 
 export default TopicCardBody;
