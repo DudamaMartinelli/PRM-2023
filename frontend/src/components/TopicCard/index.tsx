@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { IComment, ITopic } from "../../@types";
+import { IComment, ITopic, IUser } from "../../@types";
 import TopicCardActions from "../TopicCardActions";
 import TopicCardBody from "../TopicCardBody";
 import TopicCardHeader from "../TopicCardHeader";
 import { Alert, Snackbar } from "@mui/material";
 import TopicComment from "../TopicComment";
-import { createComment, getCommentsByTopic } from "../../services";
+import { createComment, createTopic, getCommentsByTopic, getRepostsByTopic, getTopicsById } from "../../services";
 import { useAuth } from "../../hook/useAuth";
+import { useTopic } from "../../hook/useTopic";
 
 type TopicCardProps = {
     topic: ITopic
@@ -18,6 +19,9 @@ function TopicCard({
 
     //USER
     const { user } = useAuth();
+
+    //TOPIC
+    const { topics, setTopics } = useTopic();
 
     //STATES - CONTROL
     const [messageError, setMessageError] = useState('');
@@ -61,8 +65,60 @@ function TopicCard({
     }
 
     //REPOSTS
+    const [topicResposted, setTopicRepopsted] = useState<ITopic>();
+    const [reposters, setReposters] = useState<IUser[]>([]);
+    const handleClickRepost = () => {
+        //Preparar um Topic para ser enviado pro servidor
+        const repostForm: ITopic = {
+            owner: user,
+            repost: topic,
+            content: topic.content
+        }
+
+        //Chamar o service que manda o topic para o servidor
+        createTopic(repostForm)
+        .then(result => {
+            setReposters([...reposters,result.data.owner])
+
+            setTopics([result.data, ...topics])
+
+            setMessageSuccess('Repostado com sucesso!');
+                setTimeout(() => {
+                    setMessageSuccess('');
+                }, 5000);
+        })
+        .catch(error => {
+            setMessageError(error.message)
+        })
+    }
 
     //LIKES
+    //const [Likers, setLikes] = useState<IUser[]>([]);
+    /*
+    const handleClickLike = () => {
+        const LikeForm: ILike = {
+            user: user,
+            topic: topic,
+        }
+    
+        createTopic(LikeForm)
+            .then(result => {
+                setLike(result.data);
+                setTotalLikes(totalLikes+1);
+
+                setLikes([...likes, result.data]);             
+
+            })
+            .catch(error => {
+                setMessageError(error.message)
+            })
+
+
+        if (ClikedLike){
+            move
+        }
+    }
+    */
 
     //EFFECT
     useEffect(() => {
@@ -84,10 +140,34 @@ function TopicCard({
                 setMessageError(error.message);
             });
 
-        //TO-DO: Reposts
+        //TO-DO: Reposts 
+        if (topic.topic_id) {
+            getTopicsById(topic.topic_id)
+                .then(result => {
+                    setTopicRepopsted(result.data)
+                })
+                .catch(error => {
+                    setMessageError(error.message);
+                }); 
+        }
+        getRepostsByTopic(topic)
+            .then(result => {
+                const dados: ITopic[] = result.data;
 
+                const users: IUser[] = []
+                dados.forEach(topic => {
+                    if (topic.owner) {
+                        users.push(topic.owner)
+                    }
+                })
+                setReposters(users);
+            })
+            .catch(error => {
+                setMessageError(error.message);
+            });        
 
         //TO-DO: Likes
+        //getLikesByTopic(topic) 
 
     }, []);
 
@@ -99,12 +179,16 @@ function TopicCard({
              />
 
             <TopicCardBody 
+                topicResposted={topicResposted}
                 content={topic.content} />
 
             <TopicCardActions 
                 commented={Boolean(comment.user)}
                 totalComments={totalComments}
-                clickComment={handleClickComment} />
+                clickComment={handleClickComment} 
+                
+                reposters={reposters}
+                clickRespost={handleClickRepost}/>
 
             {showComments && (
                 <TopicComment 
