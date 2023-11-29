@@ -25,8 +25,8 @@ export interface IComment {
     topic?:ITopic;
     createdAt?: Date;
 }
-/*export interface ILike {
+export interface ILike {
     id?: number;
     user?: IUser;
     topic?:ITopic;
-}*/
+}

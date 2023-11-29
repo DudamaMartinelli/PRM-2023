@@ -12,10 +12,10 @@ type TopicCardActionsProps = {
     reposters: IUser[],
     clickRespost: () => void,
 
-    /* 
     liketers: IUser[],
+    totalLikes: number,
     clickLike: () => void,
-    */
+
 }
 function TopicCardActions({
     commented,
@@ -25,10 +25,11 @@ function TopicCardActions({
     reposters,
     clickRespost,
 
-    /*
     liketers,
+    totalLikes,
     clickLike,
-    */
+
+
 }: TopicCardActionsProps) {
     return (
         <div id="topic-card-actions">
@@ -59,18 +60,40 @@ function TopicCardActions({
             }>
                 <Button variant="text" size="small" startIcon={<Repeat />}
                     onClick={clickRespost}>
-                    {reposters.length}
+                    {reposters.length}                    
                 </Button>
             </Tooltip>
             
 
-            <Button variant="text" size="small" startIcon={<FavoriteBorder />}>
-                33
-            </Button>
+            <Tooltip title={
+                liketers.length > 0 ? (
+                    <Box display="flex" flexDirection="column" gap={1}
+                    style={{padding: '0.5rem'}}>
+
+                    {liketers.map((user,index) => (
+                      <Box display="flex" flexDirection="column" gap={1} style={{padding: '0.5rem'}}>
+                        <Avatar alt={user.fullname} sx={{ width: 24, height: 24 }}/>
+                        <Typography>
+                            {user.fullname}
+                        </Typography>
+                      </Box>                        
+                    ))}
+                    </Box>
+                ) : (
+                    <span>Like</span>
+                )
+            }>
+                <Button variant="text" size="small" startIcon={<FavoriteBorder />}
+                    onClick={clickLike}>
+                    {liketers.length}
+                </Button>
+            </Tooltip>
+
+            
         </div>
     )
 }
-// colocar no lugar do 33 {liketers.length}
+
 
 
 export default TopicCardActions;

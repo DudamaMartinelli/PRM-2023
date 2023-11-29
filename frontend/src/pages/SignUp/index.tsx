@@ -6,7 +6,7 @@ import { LoadingButton } from "@mui/lab";
 import { useAuth } from "../../hook/useAuth";
 
 
-import '../../assets/css/sign.css';
+import '../../assets/css/sing.css';
 
 function SignUpPage() {
 

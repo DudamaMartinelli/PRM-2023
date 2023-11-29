@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { IComment, ITopic, IUser } from "../../@types";
+import { IComment, ITopic, IUser, ILike } from "../../@types";
 import TopicCardActions from "../TopicCardActions";
 import TopicCardBody from "../TopicCardBody";
 import TopicCardHeader from "../TopicCardHeader";
 import { Alert, Snackbar } from "@mui/material";
 import TopicComment from "../TopicComment";
-import { createComment, createTopic, getCommentsByTopic, getRepostsByTopic, getTopicsById } from "../../services";
+import { createComment, createLike, createTopic, getCommentsByTopic, getRepostsByTopic, getTopicsById, getLikesByTopic } from "../../services";
 import { useAuth } from "../../hook/useAuth";
 import { useTopic } from "../../hook/useTopic";
 
@@ -92,33 +92,42 @@ function TopicCard({
         })
     }
 
-    //LIKES
-    //const [Likers, setLikes] = useState<IUser[]>([]);
-    /*
+    //LIKES   
+    //const [like, setLike] = useState<ILike>({} as ILike);
+    //const [totalLikes, setTotalLikes] = useState(0);
+    //const [liketers, setliketers] = useState<IUser[]>([]);
+
+    const [Like, setLike] = useState<ILike>({} as ILike);
+    const [likes, setLikes] = useState<ILike[]>([]);
+    const [totalLikes, setTotalLikes] = useState(0);
+    const [liketers, setliketers] = useState<IUser[]>([]);
+    
+    
     const handleClickLike = () => {
-        const LikeForm: ILike = {
+        const likeForm: ILike = {
             user: user,
             topic: topic,
-        }
-    
-        createTopic(LikeForm)
+        }        
+
+        createLike(likeForm)
             .then(result => {
                 setLike(result.data);
                 setTotalLikes(totalLikes+1);
 
-                setLikes([...likes, result.data]);             
+                setliketers([...liketers, result.data]);
+
+                setMessageSuccess('Efetuado com sucesso!');
+                setTimeout(() => {
+                    setMessageSuccess('');
+                }, 5000);
 
             })
             .catch(error => {
                 setMessageError(error.message)
             })
-
-
-        if (ClikedLike){
-            move
-        }
-    }
-    */
+        
+    }  
+    
 
     //EFFECT
     useEffect(() => {
@@ -169,6 +178,23 @@ function TopicCard({
         //TO-DO: Likes
         //getLikesByTopic(topic) 
 
+        getLikesByTopic( topic )
+        .then(result => {
+            const dados: ITopic[] = result.data;
+
+            const users: IUser[] = []
+            dados.forEach(topic => {
+                if (topic.owner) {
+                    users.push(topic.owner)
+                }
+            })
+            setReposters(users);
+        })
+        .catch(error => {
+            setMessageError(error.message);
+        });       
+
+
     }, []);
 
     return (
@@ -188,7 +214,11 @@ function TopicCard({
                 clickComment={handleClickComment} 
                 
                 reposters={reposters}
-                clickRespost={handleClickRepost}/>
+                clickRespost={handleClickRepost}
+                
+                liketers={liketers}
+                totalLikes={totalLikes}
+                clickLike={handleClickLike} />
 
             {showComments && (
                 <TopicComment 
